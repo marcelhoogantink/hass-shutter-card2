@@ -21,21 +21,9 @@ class ShutterCard extends HTMLElement {
       let allShutters = document.createElement('div');
       allShutters.className = 'sc-shutters';
       entities.forEach(function(entity) {
+        
         let entityId = entity;
-        if (entity && entity.entity) {
-            entityId = entity.entity;
-        }
-        
         let buttonsPosition = 'left';
-        if (entity && entity.buttons_position) {
-            buttonsPosition = entity.buttons_position.toLowerCase();
-            if (!['left', 'top', 'bottom', 'right'].includes(buttonsPosition)) {
-              buttonsPosition = 'left'
-            }
-        }
-        const buttonsInRow = buttonsPosition == 'top' || buttonsPosition == 'bottom';
-        const buttonsContainerReversed = buttonsPosition == 'bottom' || buttonsPosition == 'right';
-        
         let titlePosition = 'top';
         let invertPercentage = false;
         let partial = 0;
@@ -50,7 +38,17 @@ class ShutterCard extends HTMLElement {
         let sc_slide_image = `${image_map}/sc-slide.png`;
         let sc_slide_bottom_image = `${image_map}/sc-slide-bottom.png`;
 
-        if (entity){
+        if (entity)
+        {
+          if (entity.entity) {
+            entityId = entity.entity;
+          }
+          if (entity.buttons_position) {
+            buttonsPosition = entity.buttons_position.toLowerCase();
+            if (!['left', 'top', 'bottom', 'right'].includes(buttonsPosition)) {
+              buttonsPosition = 'left'
+            }
+          }
           if (entity.title_position) {
               titlePosition = entity.title_position.toLowerCase();
           }
@@ -64,7 +62,7 @@ class ShutterCard extends HTMLElement {
             sc_view_image = image_map+'/'+entity.view_image;
           }
           if (entity.slide_image) {
-            sc_slide_image = image_map+'/'+entity.slide_image;
+            sc_slide_image = `${image_map}/${entity.slide_image}`;
           }
           if (entity.slide_bottom_image) {
             sc_slide_bottom_image = image_map+'/'+entity.slide_bottom_image;
@@ -83,6 +81,9 @@ class ShutterCard extends HTMLElement {
           }
         }
           
+        const buttonsInRow = buttonsPosition == 'top' || buttonsPosition == 'bottom';
+        const buttonsContainerReversed = buttonsPosition == 'bottom' || buttonsPosition == 'right';
+
         let shutter = document.createElement('div');
 
         const img = new Image();
@@ -104,7 +105,7 @@ class ShutterCard extends HTMLElement {
           </div>
           <div class="sc-shutter-middle" style="flex-flow: ` + (buttonsInRow ? 'column': 'row') + (buttonsContainerReversed ? '-reverse' : '') + ` nowrap;">
             <div class="sc-shutter-buttons" style="flex-flow: ` + (buttonsInRow ? 'row': 'column') + ` wrap;">
-              `+(partial?`<ha-icon-button label="Partially close" class="sc-shutter-button sc-shutter-button-partial" data-command="partial" data-position="`+partial+`"><ha-icon icon="mdi:arrow-expand-vertical"></ha-icon></ha-icon-button>`:``)+`
+              `+(partial?`<ha-icon-button label="Partially close (${partial}%)" class="sc-shutter-button sc-shutter-button-partial" data-command="partial" data-position="`+partial+`"><ha-icon icon="mdi:arrow-expand-vertical"></ha-icon></ha-icon-button>`:``)+`
               ` + (tilt?`
               <ha-icon-button label="` + hass.localize(`ui.dialogs.more_info_control.cover.open_tilt_cover`) +`" class="sc-shutter-button sc-shutter-button-tilt-open" data-command="tilt-open"><ha-icon icon="mdi:arrow-top-right"></ha-icon></ha-icon-button>
               <ha-icon-button label="` + hass.localize(`ui.dialogs.more_info_control.cover.close_tilt_cover`) +`"class="sc-shutter-button sc-shutter-button-tilt-down" data-command="tilt-close"><ha-icon icon="mdi:arrow-bottom-left"></ha-icon></ha-icon-button>
